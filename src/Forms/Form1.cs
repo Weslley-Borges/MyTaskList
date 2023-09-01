@@ -18,11 +18,8 @@ namespace MyTaskList
 
         private void button1_Click(object sender, EventArgs e)
         {
-            textBox1.Text = "Clicou";
             MajorTask t = new() {Title = $"Eita_{count}", Description = "Vish" };
-            textBox1.Text = "Criando...";
             majorTaskServices.AddTask(t);
-            textBox1.Text = "Criado!";
 
             var ts = majorTaskServices.GetTask(t.Id);
             if (ts != null)

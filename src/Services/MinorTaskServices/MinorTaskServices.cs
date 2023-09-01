@@ -4,7 +4,7 @@ using MyTaskList.src.Services.MajorTaskServices;
 
 namespace MyTaskList.src.Services
 {
-    internal class MinorTaskServices : IMinorTaskServices
+	internal class MinorTaskServices : IMinorTaskServices
 	{
 		private readonly DataContext _context;
 
@@ -13,35 +13,44 @@ namespace MyTaskList.src.Services
 			_context = context;
 		}
 
-        public List<MinorTask> GetAllTasks()
+        public void AddTask(MinorTask minorTask)
         {
-            throw new NotImplementedException();
+            _context.MinorTasks.Add(minorTask);
+            _context.SaveChanges();
         }
 
-        public void AddTask(string title, string description)
-		{
-			throw new NotImplementedException();
-		}
+        public void DeleteTask(MinorTask minorTask)
+        {
+            _context.MinorTasks.Remove(minorTask);
+            _context.SaveChanges();
+        }
 
-		public void DeleteTask(int id)
-		{
-			throw new NotImplementedException();
-		}
+        public MinorTask? GetTask(int id)
+        {
+            var task = _context.MinorTasks.Find(id);
+            if (task == null)
+                return null;
+            return task;
+        }
 
+        public List<MinorTask>? GetTasksFromMajorTask(int majorTaskId)
+        {
+            var task = _context.MinorTasks.ToList().FindAll(t => t.MajorTask.Id == majorTaskId);
+            if (task == null)
+                return null;
+            return task;
+        }
 
-		public MinorTask GetTask(int id)
-		{
-			throw new NotImplementedException();
-		}
+        public void UpdateTask(int id, MinorTask request)
+        {
+            var task = _context.MinorTasks.Find(request);
+            if (task == null)
+                return;
 
-		public void SetTaskDone(int id)
-		{
-			throw new NotImplementedException();
-		}
+            task.Title = request.Title;
+            task.Done = request.Done;
 
-		public MinorTask UpdateTask(int id, string title, string description)
-		{
-			throw new NotImplementedException();
-		}
-	}
+            _context.SaveChanges();
+        }
+    }
 }
