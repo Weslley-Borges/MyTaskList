@@ -1,9 +1,10 @@
 ﻿using MyTaskList.src.Data;
 using MyTaskList.src.Models;
+using MyTaskList.src.Services.MajorTaskServices;
 
 namespace MyTaskList.src.Services
 {
-	internal class MinorTaskServices : IMinorTaskServices
+    internal class MinorTaskServices : IMinorTaskServices
 	{
 		private readonly DataContext _context;
 
