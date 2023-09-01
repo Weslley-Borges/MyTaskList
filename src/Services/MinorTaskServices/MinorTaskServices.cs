@@ -2,7 +2,7 @@
 using MyTaskList.src.Models;
 using MyTaskList.src.Services.MajorTaskServices;
 
-namespace MyTaskList.src.Services
+namespace MyTaskList.src.Services.MinorTaskServices
 {
 	internal class MinorTaskServices : IMinorTaskServices
 	{

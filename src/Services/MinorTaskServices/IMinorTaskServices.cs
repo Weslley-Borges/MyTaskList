@@ -1,6 +1,6 @@
 ﻿using MyTaskList.src.Models;
 
-namespace MyTaskList.src.Services.MajorTaskServices
+namespace MyTaskList.src.Services.MinorTaskServices
 {
     internal interface IMinorTaskServices
     {
