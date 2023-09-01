@@ -9,27 +9,27 @@ namespace MyTaskList
         private static readonly DataContext db = new();
         private readonly MajorTaskServices majorTaskServices = new(db);
 
-        public int count = 0;
-
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void NewMajorTaskButton_Click(object sender, EventArgs e)
         {
-            textBox1.Text = "Clicou";
-            MajorTask t = new() {Title = $"Eita_{count}", Description = "Vish" };
-            textBox1.Text = "Criando...";
-            majorTaskServices.AddTask(t);
-            textBox1.Text = "Criado!";
+            MajorTask t = new()
+            {
+                Title = MajorTaskTitleInput.Text,
+                Description = MajorTaskDescriptionInput.Text
+            };
 
-            var ts = majorTaskServices.GetTask(t.Id);
-            if (ts != null)
-                textBox1.Text = ts.Title;
+            majorTaskServices.AddTask(t);
+
+            MajorTasksList.Items.Add($"{MajorTaskTitleInput.Text} - {MajorTaskDescriptionInput.Text}");
+            MajorTaskTitleInput.Text = "";
+            MajorTaskDescriptionInput.Text = "";
 
             majorTaskServices.DeleteTask(t);
-            count++;
         }
+
     }
 }
