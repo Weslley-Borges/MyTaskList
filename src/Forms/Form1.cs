@@ -2,7 +2,6 @@ using MyTaskList.src.Data;
 using MyTaskList.src.Models;
 using MyTaskList.src.Services.MajorTaskServices;
 using MyTaskList.src.Services.MinorTaskServices;
-using System.Windows.Forms;
 
 namespace MyTaskList
 {
@@ -17,7 +16,7 @@ namespace MyTaskList
 		public Form1()
 		{
 			InitializeComponent();
-			updateForm();
+			UpdateForm();
 		}
 
 		private void NewMajorTaskButton_Click(object sender, EventArgs e)
@@ -47,10 +46,13 @@ namespace MyTaskList
 			// Inserir no banco de dados
 			majorTaskServices.AddTask(t);
 			atualTask = null;
-			updateForm();
+			UpdateForm();
 		}
 
-		private void updateForm()
+		/// <summary>
+		/// Updates WinForm's view
+		/// </summary>
+		private void UpdateForm()
 		{
 			MajorTaskErrorLabel.Text = "";
 			MinorTaskErrorLabel.Text = "";
@@ -92,7 +94,7 @@ namespace MyTaskList
 			if (selectedTask == null) return;
 
 			atualTask = selectedTask;
-			updateForm();
+			UpdateForm();
 		}
 	}
 }
