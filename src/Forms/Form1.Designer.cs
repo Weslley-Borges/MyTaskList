@@ -43,6 +43,8 @@
 			MinorTaskInput = new TextBox();
 			DeleteMinorTaskButton = new Button();
 			UpdateMinorTaskButton = new Button();
+			MajorTaskErrorLabel = new Label();
+			MinorTaskErrorLabel = new Label();
 			SuspendLayout();
 			// 
 			// NewMinorTaskButton
@@ -194,12 +196,34 @@
 			UpdateMinorTaskButton.Text = "Atualizar";
 			UpdateMinorTaskButton.UseVisualStyleBackColor = true;
 			// 
+			// MajorTaskErrorLabel
+			// 
+			MajorTaskErrorLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+			MajorTaskErrorLabel.ForeColor = Color.Red;
+			MajorTaskErrorLabel.Location = new Point(556, 24);
+			MajorTaskErrorLabel.Name = "MajorTaskErrorLabel";
+			MajorTaskErrorLabel.Size = new Size(140, 113);
+			MajorTaskErrorLabel.TabIndex = 17;
+			MajorTaskErrorLabel.Text = ".";
+			// 
+			// MinorTaskErrorLabel
+			// 
+			MinorTaskErrorLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+			MinorTaskErrorLabel.ForeColor = Color.Red;
+			MinorTaskErrorLabel.Location = new Point(556, 275);
+			MinorTaskErrorLabel.Name = "MinorTaskErrorLabel";
+			MinorTaskErrorLabel.Size = new Size(140, 113);
+			MinorTaskErrorLabel.TabIndex = 18;
+			MinorTaskErrorLabel.Text = ".";
+			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.White;
-			ClientSize = new Size(564, 416);
+			ClientSize = new Size(699, 416);
+			Controls.Add(MinorTaskErrorLabel);
+			Controls.Add(MajorTaskErrorLabel);
 			Controls.Add(UpdateMinorTaskButton);
 			Controls.Add(DeleteMinorTaskButton);
 			Controls.Add(label1);
@@ -242,5 +266,7 @@
 		private TextBox MinorTaskInput;
 		private Button DeleteMinorTaskButton;
 		private Button UpdateMinorTaskButton;
+		private Label MajorTaskErrorLabel;
+		private Label MinorTaskErrorLabel;
 	}
 }

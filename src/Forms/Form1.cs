@@ -2,6 +2,7 @@ using MyTaskList.src.Data;
 using MyTaskList.src.Models;
 using MyTaskList.src.Services.MajorTaskServices;
 using MyTaskList.src.Services.MinorTaskServices;
+using System.Windows.Forms;
 
 namespace MyTaskList
 {
@@ -16,6 +17,7 @@ namespace MyTaskList
 		public Form1()
 		{
 			InitializeComponent();
+			updateForm();
 		}
 
 		private void NewMajorTaskButton_Click(object sender, EventArgs e)
@@ -26,22 +28,38 @@ namespace MyTaskList
 				Description = MajorTaskDescriptionInput.Text
 			};
 
+			// Validar
+			bool valid = true;
+			List<MajorTask> tasks = majorTaskServices.GetAllTasks();
+
+			foreach (MajorTask mT in tasks)
+			{
+				valid = mT.Title != t.Title;
+				if (!valid) break;
+			}
+
+			if (!valid)
+			{
+				MajorTaskErrorLabel.Text = "ERRO: CRIE UMA TAREFA COM NOME DIFERENTE";
+				return;
+			}
+
+			// Inserir no banco de dados
 			majorTaskServices.AddTask(t);
-			MajorTasksList.Items.Add($"{MajorTaskTitleInput.Text} - {MajorTaskDescriptionInput.Text}");
-
 			atualTask = null;
-
-			majorTaskServices.DeleteTask(t);
 			updateForm();
 		}
 
 		private void updateForm()
 		{
+			MajorTaskErrorLabel.Text = "";
+			MinorTaskErrorLabel.Text = "";
+
 			MinorTasksCheckList.Items.Clear();
 			MajorTasksList.Items.Clear();
 			majorTaskServices
 				.GetAllTasks()
-				.ForEach(t => MajorTasksList.Items.Add(t));
+				.ForEach(t => MajorTasksList.Items.Add(t.Title));
 
 			if (atualTask == null)
 			{
@@ -65,7 +83,16 @@ namespace MyTaskList
 
 		private void MajorTasksList_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			
+			var selected = MajorTasksList.SelectedItem;
+			if (selected == null) return;
+
+			var selectedTask = majorTaskServices
+				.GetAllTasks()
+				.Find(t => t.Title == selected.ToString());
+			if (selectedTask == null) return;
+
+			atualTask = selectedTask;
+			updateForm();
 		}
 	}
 }

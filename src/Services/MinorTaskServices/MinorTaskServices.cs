@@ -1,6 +1,5 @@
 ﻿using MyTaskList.src.Data;
 using MyTaskList.src.Models;
-using MyTaskList.src.Services.MajorTaskServices;
 
 namespace MyTaskList.src.Services.MinorTaskServices
 {
