@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MyTaskList.src.Data;
+﻿using MyTaskList.src.Data;
 using MyTaskList.src.Models;
 
 namespace MyTaskList.src.Services.MajorTaskServices
 {
-    internal class MajorTaskServices : IMajorTaskServices
+	/// <summary>
+	/// A class for controlling operations on the MajorTask table in the database
+	/// </summary>
+	internal class MajorTaskServices : IMajorTaskServices
     {
         private readonly DataContext _context;
 

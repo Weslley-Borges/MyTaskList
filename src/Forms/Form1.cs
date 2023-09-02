@@ -1,35 +1,113 @@
 using MyTaskList.src.Data;
 using MyTaskList.src.Models;
 using MyTaskList.src.Services.MajorTaskServices;
+using MyTaskList.src.Services.MinorTaskServices;
 
 namespace MyTaskList
 {
-    public partial class Form1 : Form
-    {
-        private static readonly DataContext db = new();
-        private readonly MajorTaskServices majorTaskServices = new(db);
+	public partial class Form1 : Form
+	{
+		private static readonly DataContext db = new();
+		private readonly MajorTaskServices majorTaskServices = new(db);
+		private readonly MinorTaskServices minorTaskServices = new(db);
 
-        public Form1()
-        {
-            InitializeComponent();
-        }
+		private MajorTask? atualTask = null;
 
-        private void NewMajorTaskButton_Click(object sender, EventArgs e)
-        {
-            MajorTask t = new()
-            {
-                Title = MajorTaskTitleInput.Text,
-                Description = MajorTaskDescriptionInput.Text
-            };
+		public Form1()
+		{
+			InitializeComponent();
+			UpdateForm();
+		}
 
-            majorTaskServices.AddTask(t);
+		private void NewMajorTaskButton_Click(object sender, EventArgs e)
+		{
+			MajorTask t = new()
+			{
+				Title = MajorTaskTitleInput.Text,
+				Description = MajorTaskDescriptionInput.Text
+			};
 
-            MajorTasksList.Items.Add($"{MajorTaskTitleInput.Text} - {MajorTaskDescriptionInput.Text}");
-            MajorTaskTitleInput.Text = "";
-            MajorTaskDescriptionInput.Text = "";
+			// Validar
+			bool valid = true;
+			List<MajorTask> tasks = majorTaskServices.GetAllTasks();
 
-            majorTaskServices.DeleteTask(t);
-        }
+			foreach (MajorTask mT in tasks)
+			{
+				valid = mT.Title != t.Title;
+				if (!valid) break;
+			}
 
-    }
+			if (!valid)
+			{
+				MajorTaskErrorLabel.Text = "ERRO: CRIE UMA TAREFA COM NOME DIFERENTE";
+				return;
+			}
+
+			// Inserir no banco de dados
+			majorTaskServices.AddTask(t);
+			atualTask = null;
+			UpdateForm();
+		}
+
+		/// <summary>
+		/// Updates WinForm's view
+		/// </summary>
+		private void UpdateForm()
+		{
+			MajorTaskErrorLabel.Text = "";
+			MinorTaskErrorLabel.Text = "";
+
+			MinorTasksCheckList.Items.Clear();
+			MajorTasksList.Items.Clear();
+			majorTaskServices
+				.GetAllTasks()
+				.ForEach(t => MajorTasksList.Items.Add(t.Title));
+
+			if (atualTask == null)
+			{
+				MajorTaskTitleInput.Text = "";
+				MajorTaskDescriptionInput.Text = "";
+			}
+			else
+			{
+				MajorTaskTitleInput.Text = atualTask.Title;
+				MajorTaskDescriptionInput.Text = atualTask.Description;
+				minorTaskServices
+					.GetTasksFromMajorTask(atualTask.Id)?
+					.ForEach(t => MinorTasksCheckList.Items.Add(t.Title));
+			}
+		}
+
+		private void MinorTasksCheckList_SelectedIndexChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void MajorTasksList_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var selected = MajorTasksList.SelectedItem;
+			if (selected == null) return;
+
+			var selectedTask = majorTaskServices
+				.GetAllTasks()
+				.Find(t => t.Title == selected.ToString());
+			if (selectedTask == null) return;
+
+			atualTask = selectedTask;
+			UpdateForm();
+		}
+
+		private void DeleteMajorTaskButton_Click(object sender, EventArgs e)
+		{
+			if (atualTask == null)
+			{
+				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
+				return;
+			}
+
+			majorTaskServices.DeleteTask(atualTask);
+			atualTask = null;
+			UpdateForm();
+		}
+	}
 }

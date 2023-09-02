@@ -1,9 +1,11 @@
 ﻿using MyTaskList.src.Data;
 using MyTaskList.src.Models;
-using MyTaskList.src.Services.MajorTaskServices;
 
-namespace MyTaskList.src.Services
+namespace MyTaskList.src.Services.MinorTaskServices
 {
+	/// <summary>
+	/// A class for controlling operations on the MinorTask table in the database
+	/// </summary>
 	internal class MinorTaskServices : IMinorTaskServices
 	{
 		private readonly DataContext _context;
@@ -13,18 +15,31 @@ namespace MyTaskList.src.Services
 			_context = context;
 		}
 
+        /// <summary>
+        /// Add a new <see cref="MinorTask"/> in the table
+        /// </summary>
+        /// <param name="minorTask">the new task</param>
         public void AddTask(MinorTask minorTask)
         {
             _context.MinorTasks.Add(minorTask);
             _context.SaveChanges();
         }
 
-        public void DeleteTask(MinorTask minorTask)
+		/// <summary>
+		/// Remove a <see cref="MinorTask"/> from the table
+		/// </summary>
+		/// <param name="minorTask">the new task</param>
+		public void DeleteTask(MinorTask minorTask)
         {
             _context.MinorTasks.Remove(minorTask);
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Get a specific <see cref="MinorTask"/> by the Id
+        /// </summary>
+        /// <param name="id">The Requested <see cref="MinorTask"/> Id</param>
+        /// <returns>A task or null</returns>
         public MinorTask? GetTask(int id)
         {
             var task = _context.MinorTasks.Find(id);
@@ -33,15 +48,21 @@ namespace MyTaskList.src.Services
             return task;
         }
 
-        public List<MinorTask>? GetTasksFromMajorTask(int majorTaskId)
+        /// <summary>
+        /// Get all <see cref="MinorTask"/>s of a specific <see cref="MajorTask"/> by it's Id
+        /// </summary>
+        /// <param name="majorTaskId">The MajorTask Id</param>
+        /// <returns>A list of <see cref="MinorTask"/></returns>
+        public List<MinorTask> GetTasksFromMajorTask(int majorTaskId)
         {
-            var task = _context.MinorTasks.ToList().FindAll(t => t.MajorTask.Id == majorTaskId);
-            if (task == null)
-                return null;
-            return task;
+            return _context.MinorTasks.ToList().FindAll(t => t.MajorTask.Id == majorTaskId);
         }
 
-        public void UpdateTask(int id, MinorTask request)
+        /// <summary>
+        /// Update a specific <see cref="MinorTask"/>
+        /// </summary>
+        /// <param name="request">The requested task</param>
+        public void UpdateTask(MinorTask request)
         {
             var task = _context.MinorTasks.Find(request);
             if (task == null)
