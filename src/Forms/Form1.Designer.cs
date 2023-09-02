@@ -140,6 +140,7 @@
 			DeleteMajorTaskButton.TabIndex = 10;
 			DeleteMajorTaskButton.Text = "Excluir";
 			DeleteMajorTaskButton.UseVisualStyleBackColor = true;
+			DeleteMajorTaskButton.Click += DeleteMajorTaskButton_Click;
 			// 
 			// UpdateMajorTaskButton
 			// 

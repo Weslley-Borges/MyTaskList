@@ -96,5 +96,18 @@ namespace MyTaskList
 			atualTask = selectedTask;
 			UpdateForm();
 		}
+
+		private void DeleteMajorTaskButton_Click(object sender, EventArgs e)
+		{
+			if (atualTask == null)
+			{
+				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
+				return;
+			}
+
+			majorTaskServices.DeleteTask(atualTask);
+			atualTask = null;
+			UpdateForm();
+		}
 	}
 }
