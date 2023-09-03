@@ -58,13 +58,14 @@ namespace MyTaskList.src.Services.MinorTaskServices
             return _context.MinorTasks.ToList().FindAll(t => t.MajorTask.Id == majorTaskId);
         }
 
-        /// <summary>
-        /// Update a specific <see cref="MinorTask"/>
-        /// </summary>
-        /// <param name="request">The requested task</param>
-        public void UpdateTask(MinorTask request)
+		/// <summary>
+		/// Update a specific <see cref="MinorTask"/>
+		/// </summary>
+		/// <param name="id">The requested task Id</param>
+		/// <param name="request">task new data</param>
+		public void UpdateTask(int id, MinorTask request)
         {
-            var task = _context.MinorTasks.Find(request);
+            var task = GetTask(id);
             if (task == null)
                 return;
 

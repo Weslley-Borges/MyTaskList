@@ -55,6 +55,7 @@
 			NewMinorTaskButton.TabIndex = 0;
 			NewMinorTaskButton.Text = "Criar";
 			NewMinorTaskButton.UseVisualStyleBackColor = true;
+			NewMinorTaskButton.Click += NewMinorTaskButton_Click;
 			// 
 			// MajorTaskTitleInput
 			// 
@@ -98,9 +99,9 @@
 			MajorTaskDescriptionLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
 			MajorTaskDescriptionLabel.Location = new Point(252, 51);
 			MajorTaskDescriptionLabel.Name = "MajorTaskDescriptionLabel";
-			MajorTaskDescriptionLabel.Size = new Size(68, 15);
+			MajorTaskDescriptionLabel.Size = new Size(59, 15);
 			MajorTaskDescriptionLabel.TabIndex = 5;
-			MajorTaskDescriptionLabel.Text = "Description";
+			MajorTaskDescriptionLabel.Text = "Descrição";
 			// 
 			// MinorTasksListLabel
 			// 
@@ -150,6 +151,7 @@
 			UpdateMajorTaskButton.TabIndex = 11;
 			UpdateMajorTaskButton.Text = "Atualizar";
 			UpdateMajorTaskButton.UseVisualStyleBackColor = true;
+			UpdateMajorTaskButton.Click += UpdateMajorTaskButton_Click;
 			// 
 			// label2
 			// 
@@ -187,6 +189,7 @@
 			DeleteMinorTaskButton.TabIndex = 15;
 			DeleteMinorTaskButton.Text = "Excluir";
 			DeleteMinorTaskButton.UseVisualStyleBackColor = true;
+			DeleteMinorTaskButton.Click += DeleteMinorTaskButton_Click;
 			// 
 			// UpdateMinorTaskButton
 			// 
@@ -196,6 +199,7 @@
 			UpdateMinorTaskButton.TabIndex = 16;
 			UpdateMinorTaskButton.Text = "Atualizar";
 			UpdateMinorTaskButton.UseVisualStyleBackColor = true;
+			UpdateMinorTaskButton.Click += UpdateMinorTaskButton_Click;
 			// 
 			// MajorTaskErrorLabel
 			// 

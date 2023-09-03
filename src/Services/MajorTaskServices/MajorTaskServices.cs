@@ -62,9 +62,9 @@ namespace MyTaskList.src.Services.MajorTaskServices
         /// Update a <see cref="MajorTask"/>'s data
         /// </summary>
         /// <param name="request">Th <see cref="MajorTask"/> requested.</param>
-        public void UpdateTask(MajorTask request)
+        public void UpdateTask(int id, MajorTask request)
         {
-            var task = _context.MajorTasks.Find(request);
+            var task = GetTask(id);
             if (task == null)
                 return;
 
