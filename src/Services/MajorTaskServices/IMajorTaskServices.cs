@@ -6,8 +6,8 @@ namespace MyTaskList.src.Services
     {
         List<MajorTask> GetAllTasks();
         MajorTask? GetTask(int id);
-        void AddTask(MajorTask majorTask);
-        void DeleteTask(MajorTask majorTask);
-        void UpdateTask(int id, MajorTask request);
+		MajorTask? AddTask(MajorTask majorTask);
+		MajorTask? DeleteTask(MajorTask majorTask);
+		MajorTask? UpdateTask(int id, MajorTask request);
     }
 }

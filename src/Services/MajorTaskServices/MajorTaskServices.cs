@@ -42,37 +42,43 @@ namespace MyTaskList.src.Services.MajorTaskServices
         /// Add a <see cref="MajorTask"/> to the list
         /// </summary>
         /// <param name="majorTask">New task</param>
-        public void AddTask(MajorTask majorTask)
+        public MajorTask AddTask(MajorTask majorTask)
         {
             _context.MajorTasks.Add(majorTask);
             _context.SaveChanges();
+
+            return majorTask;
         }
 
         /// <summary>
         /// Remove a <see cref="MajorTask"/> from the list
         /// </summary>
         /// <param name="majorTask">old task</param>
-        public void DeleteTask(MajorTask majorTask)
+        public MajorTask DeleteTask(MajorTask majorTask)
         {
             _context.MajorTasks.Remove(majorTask);
             _context.SaveChanges();
+
+            return majorTask;
         }
 
         /// <summary>
         /// Update a <see cref="MajorTask"/>'s data
         /// </summary>
         /// <param name="request">Th <see cref="MajorTask"/> requested.</param>
-        public void UpdateTask(int id, MajorTask request)
+        public MajorTask? UpdateTask(int id, MajorTask request)
         {
             var task = GetTask(id);
             if (task == null)
-                return;
+                return null;
 
             task.Title = request.Title;
             task.Description = request.Description;
             task.Done = request.Done;
 
             _context.SaveChanges();
+
+            return GetTask(id);
         }
     }
 }

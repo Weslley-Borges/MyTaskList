@@ -1,3 +1,4 @@
+using MyTaskList.src.Controllers;
 using MyTaskList.src.Data;
 using MyTaskList.src.Models;
 using MyTaskList.src.Services.MajorTaskServices;
@@ -7,79 +8,83 @@ namespace MyTaskList
 {
 	public partial class Form1 : Form
 	{
-		private static readonly DataContext db = new();
-		private readonly MajorTaskServices majorTaskServices = new(db);
-		private readonly MinorTaskServices minorTaskServices = new(db);
+		private readonly DataContext db = new();
+		private readonly MinorTaskServices _minorTaskServices = new(db);
 
 		private MajorTask? atualMajorTask;
 		private MinorTask? atualMinorTask;
 
+		private readonly MajorTaskController _majorTaskController;
+
 		public Form1()
 		{
+			_majorTaskController = new MajorTaskController(new MajorTaskServices(db));
+
 			InitializeComponent();
 			UpdateForm();
 		}
 
+		// ----- MajorTasks Events
 		private void NewMajorTaskButton_Click(object sender, EventArgs e)
 		{
-			if (MajorTaskTitleInput.Text == "" || MajorTaskDescriptionInput.Text == "")
+			Response<MajorTask> result = _majorTaskController.NewMajorTask(
+				new()
+				{
+					Title = MajorTaskTitleInput.Text,
+					Description = MajorTaskDescriptionInput.Text
+				});
+
+			if (!result.IsError)
+				atualMajorTask = null;
+
+			UpdateForm();
+			ShowMessage(result, MajorTaskErrorLabel);
+		}
+
+		private void UpdateMajorTaskButton_Click(object sender, EventArgs e)
+		{
+			Response<MajorTask> result = _majorTaskController.UpdateMajorTask(
+				atualMajorTask,
+				new()
+				{
+					Title = MajorTaskTitleInput.Text,
+					Description = MajorTaskDescriptionInput.Text
+				});
+
+			if (!result.IsError)
+				atualMajorTask = result.Data;
+
+			UpdateForm();
+			ShowMessage(result, MajorTaskErrorLabel);
+		}
+
+		private void DeleteMajorTaskButton_Click(object sender, EventArgs e)
+		{
+			Response<MajorTask> result = _majorTaskController.DeleteMajorTask(atualMajorTask);
+
+			if (result.IsError)
 			{
-				MajorTaskErrorLabel.Text = "ERRO: Preencha os campos 'Título' e 'Descrição'";
+				MajorTaskErrorLabel.Text = result.Message;
 				return;
 			}
 
-			MajorTask t = new()
-			{
-				Title = MajorTaskTitleInput.Text,
-				Description = MajorTaskDescriptionInput.Text
-			};
-
-			// Validar
-			bool valid = true;
-			List<MajorTask> tasks = majorTaskServices.GetAllTasks();
-
-			foreach (MajorTask mT in tasks)
-			{
-				valid = mT.Title != t.Title;
-				if (!valid) break;
-			}
-
-			if (!valid)
-			{
-				MajorTaskErrorLabel.Text = "ERRO: CRIE UMA TAREFA COM NOME DIFERENTE";
-				return;
-			}
-
-			// Inserir no banco de dados
-			majorTaskServices.AddTask(t);
 			atualMajorTask = null;
+			UpdateForm();
+			ShowMessage(result, MajorTaskErrorLabel);
+		}
+
+		private void MajorTasksList_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			atualMajorTask = _majorTaskController
+				.GetAllTasks()
+				.Data?
+				.Find(t => t?.Title == MajorTasksList.SelectedItem?.ToString());
+
+			atualMinorTask = null;
 			UpdateForm();
 		}
 
-		/// <summary>
-		/// Updates WinForm's view
-		/// </summary>
-		private void UpdateForm()
-		{
-			MajorTaskErrorLabel.Text = "";
-			MinorTaskErrorLabel.Text = "";
-			MinorTasksCheckList.Items.Clear();
-			MajorTasksList.Items.Clear();
-
-			majorTaskServices
-				.GetAllTasks()
-				.ForEach(t => MajorTasksList.Items.Add(t.Title));
-
-			MajorTaskTitleInput.Text = atualMajorTask?.Title;
-			MajorTaskDescriptionInput.Text = atualMajorTask?.Description;
-			MinorTaskInput.Text = atualMinorTask?.Title;
-
-			if (atualMajorTask == null) return;
-
-			minorTaskServices
-				.GetTasksFromMajorTask(atualMajorTask.Id)
-				.ForEach(t => MinorTasksCheckList.Items.Add(t.Title));
-		}
+		
 
 		private void MinorTasksCheckList_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -94,51 +99,7 @@ namespace MyTaskList
 			UpdateForm();
 		}
 
-		private void MajorTasksList_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var selected = MajorTasksList.SelectedItem;
-			if (selected == null) return;
-
-			var selectedTask = majorTaskServices
-				.GetAllTasks()
-				.Find(t => t?.Title == selected.ToString());
-			if (selectedTask == null) return;
-
-			atualMajorTask = selectedTask;
-			atualMinorTask = null;
-			UpdateForm();
-		}
-
-		private void DeleteMajorTaskButton_Click(object sender, EventArgs e)
-		{
-			if (atualMajorTask == null)
-			{
-				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
-				return;
-			}
-
-			majorTaskServices.DeleteTask(atualMajorTask);
-			atualMajorTask = null;
-			UpdateForm();
-		}
-
-		private void UpdateMajorTaskButton_Click(object sender, EventArgs e)
-		{
-			if (atualMajorTask == null)
-			{
-				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
-				return;
-			}
-
-			MajorTask request = new()
-			{
-				Title = MajorTaskTitleInput.Text,
-				Description = MajorTaskDescriptionInput.Text
-			};
-
-			majorTaskServices.UpdateTask(atualMajorTask.Id, request);
-			UpdateForm();
-		}
+		
 
 		private void NewMinorTaskButton_Click(object sender, EventArgs e)
 		{
@@ -219,6 +180,43 @@ namespace MyTaskList
 
 			minorTaskServices.UpdateTask(atualMinorTask.Id, request);
 			UpdateForm();
+		}
+
+
+		/// <summary>
+		/// Updates WinForm's view
+		/// </summary>
+		private void UpdateForm()
+		{
+			MinorTasksCheckList.Items.Clear();
+			MajorTasksList.Items.Clear();
+
+			_majorTaskController
+				.GetAllTasks()
+				.Data?
+				.ForEach(t => MajorTasksList.Items.Add(t.Title));
+
+			MajorTaskTitleInput.Text = atualMajorTask?.Title;
+			MajorTaskDescriptionInput.Text = atualMajorTask?.Description;
+			MinorTaskInput.Text = atualMinorTask?.Title;
+
+			if (atualMajorTask == null) return;
+
+			minorTaskServices
+				.GetTasksFromMajorTask(atualMajorTask.Id)
+				.ForEach(t => MinorTasksCheckList.Items.Add(t.Title));
+		}
+
+		private static void ShowMessage<T>(Response<T> r, Label label)
+		{
+			if (r.IsError)
+			{
+				label.ForeColor = Color.Red;
+				label.Text = r.Message;
+			}
+
+			label.ForeColor = Color.Green;
+			label.Text = r.Message;
 		}
 	}
 }
