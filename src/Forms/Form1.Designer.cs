@@ -55,6 +55,7 @@
 			NewMinorTaskButton.TabIndex = 0;
 			NewMinorTaskButton.Text = "Criar";
 			NewMinorTaskButton.UseVisualStyleBackColor = true;
+			NewMinorTaskButton.Click += NewMinorTaskButton_Click;
 			// 
 			// MajorTaskTitleInput
 			// 
@@ -188,6 +189,7 @@
 			DeleteMinorTaskButton.TabIndex = 15;
 			DeleteMinorTaskButton.Text = "Excluir";
 			DeleteMinorTaskButton.UseVisualStyleBackColor = true;
+			DeleteMinorTaskButton.Click += DeleteMinorTaskButton_Click;
 			// 
 			// UpdateMinorTaskButton
 			// 
@@ -197,6 +199,7 @@
 			UpdateMinorTaskButton.TabIndex = 16;
 			UpdateMinorTaskButton.Text = "Atualizar";
 			UpdateMinorTaskButton.UseVisualStyleBackColor = true;
+			UpdateMinorTaskButton.Click += UpdateMinorTaskButton_Click;
 			// 
 			// MajorTaskErrorLabel
 			// 

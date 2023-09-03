@@ -105,6 +105,7 @@ namespace MyTaskList
 			if (selectedTask == null) return;
 
 			atualMajorTask = selectedTask;
+			atualMinorTask = null;
 			UpdateForm();
 		}
 
@@ -136,6 +137,87 @@ namespace MyTaskList
 			};
 
 			majorTaskServices.UpdateTask(atualMajorTask.Id, request);
+			UpdateForm();
+		}
+
+		private void NewMinorTaskButton_Click(object sender, EventArgs e)
+		{
+			if (atualMajorTask == null)
+			{
+				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
+				return;
+			}
+			if (MinorTaskInput.Text == "")
+			{
+				MinorTaskErrorLabel.Text = "ERRO: Preencha o campo 'Título'";
+				return;
+			}
+
+			MinorTask t = new()
+			{
+				Title = MinorTaskInput.Text,
+				MajorTask = atualMajorTask
+			};
+
+			// Validate
+			bool valid = true;
+			List<MinorTask> tasks = minorTaskServices.GetTasksFromMajorTask(atualMajorTask.Id);
+
+			foreach (MinorTask mT in tasks)
+			{
+				valid = mT.Title != t.Title;
+				if (!valid) break;
+			}
+
+			if (!valid)
+			{
+				MinorTaskErrorLabel.Text = "ERRO: CRIE UMA TAREFA COM NOME DIFERENTE";
+				return;
+			}
+
+			// Inserir no banco de dados
+			minorTaskServices.AddTask(t);
+			atualMinorTask = null;
+			UpdateForm();
+		}
+
+		private void DeleteMinorTaskButton_Click(object sender, EventArgs e)
+		{
+			if (atualMajorTask == null)
+			{
+				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
+				return;
+			}
+			if (atualMinorTask == null)
+			{
+				MinorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa menor foi selecionada!";
+				return;
+			}
+
+			minorTaskServices.DeleteTask(atualMinorTask);
+			UpdateForm();
+		}
+
+		private void UpdateMinorTaskButton_Click(object sender, EventArgs e)
+		{
+			if (atualMajorTask == null)
+			{
+				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
+				return;
+			}
+			if (atualMinorTask == null)
+			{
+				MinorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa menor foi selecionada!";
+				return;
+			}
+
+			MinorTask request = new()
+			{
+				Title = MinorTaskInput.Text,
+				MajorTask = atualMajorTask
+			};
+
+			minorTaskServices.UpdateTask(atualMinorTask.Id, request);
 			UpdateForm();
 		}
 	}
