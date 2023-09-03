@@ -8,17 +8,17 @@ namespace MyTaskList
 {
 	public partial class Form1 : Form
 	{
+		private readonly MajorTaskController _majorTaskController;
+		private readonly MinorTaskController _minorTaskController;
 		private readonly DataContext db = new();
-		private readonly MinorTaskServices _minorTaskServices = new(db);
 
 		private MajorTask? atualMajorTask;
 		private MinorTask? atualMinorTask;
 
-		private readonly MajorTaskController _majorTaskController;
-
 		public Form1()
 		{
 			_majorTaskController = new MajorTaskController(new MajorTaskServices(db));
+			_minorTaskController = new MinorTaskController(new MinorTaskServices(db));
 
 			InitializeComponent();
 			UpdateForm();
@@ -84,102 +84,54 @@ namespace MyTaskList
 			UpdateForm();
 		}
 
-		
-
+		// ----- MinorTasks Events
 		private void MinorTasksCheckList_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var selected = MinorTasksCheckList.SelectedItem;
-			if (selected == null) return;
+			string? selected = MinorTasksCheckList.SelectedItem?.ToString();
 
-			var selectedTask = atualMajorTask?
-				.MinorTasks
-				.Find(t => t.Title == selected.ToString());
+			atualMinorTask = _minorTaskController
+				.GetAllTasks()
+				.Data?
+				.Find(t => t?.Title == selected && t?.MajorTask == atualMajorTask);
 
-			atualMinorTask = selectedTask;
 			UpdateForm();
 		}
 
-		
-
 		private void NewMinorTaskButton_Click(object sender, EventArgs e)
 		{
-			if (atualMajorTask == null)
-			{
-				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
-				return;
-			}
-			if (MinorTaskInput.Text == "")
-			{
-				MinorTaskErrorLabel.Text = "ERRO: Preencha o campo 'Título'";
-				return;
-			}
+			Response<MinorTask> result = _minorTaskController.NewMinorTask(
+				atualMajorTask, 
+				MinorTaskInput.Text);
 
-			MinorTask t = new()
-			{
-				Title = MinorTaskInput.Text,
-				MajorTask = atualMajorTask
-			};
+			if (!result.IsError)
+				atualMinorTask = null;
 
-			// Validate
-			bool valid = true;
-			List<MinorTask> tasks = minorTaskServices.GetTasksFromMajorTask(atualMajorTask.Id);
-
-			foreach (MinorTask mT in tasks)
-			{
-				valid = mT.Title != t.Title;
-				if (!valid) break;
-			}
-
-			if (!valid)
-			{
-				MinorTaskErrorLabel.Text = "ERRO: CRIE UMA TAREFA COM NOME DIFERENTE";
-				return;
-			}
-
-			// Inserir no banco de dados
-			minorTaskServices.AddTask(t);
-			atualMinorTask = null;
 			UpdateForm();
+			ShowMessage(result, MinorTaskErrorLabel);
 		}
 
 		private void DeleteMinorTaskButton_Click(object sender, EventArgs e)
 		{
-			if (atualMajorTask == null)
-			{
-				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
-				return;
-			}
-			if (atualMinorTask == null)
-			{
-				MinorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa menor foi selecionada!";
-				return;
-			}
+			Response<MinorTask> result = _minorTaskController.DeleteMinorTask(atualMinorTask);
 
-			minorTaskServices.DeleteTask(atualMinorTask);
+			if (!result.IsError)
+				atualMinorTask = null;
+
 			UpdateForm();
+			ShowMessage(result, MinorTaskErrorLabel);
 		}
 
 		private void UpdateMinorTaskButton_Click(object sender, EventArgs e)
 		{
-			if (atualMajorTask == null)
-			{
-				MajorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa foi selecionada!";
-				return;
-			}
-			if (atualMinorTask == null)
-			{
-				MinorTaskErrorLabel.Text = "ERRO: Nenhuma tarefa menor foi selecionada!";
-				return;
-			}
+			
+			Response<MinorTask> result = _minorTaskController.UpdateMinorTask(
+				atualMinorTask, MinorTaskInput.Text);
 
-			MinorTask request = new()
-			{
-				Title = MinorTaskInput.Text,
-				MajorTask = atualMajorTask
-			};
+			if (!result.IsError)
+				atualMinorTask = null;
 
-			minorTaskServices.UpdateTask(atualMinorTask.Id, request);
 			UpdateForm();
+			ShowMessage(result, MinorTaskErrorLabel);
 		}
 
 
@@ -202,8 +154,9 @@ namespace MyTaskList
 
 			if (atualMajorTask == null) return;
 
-			minorTaskServices
-				.GetTasksFromMajorTask(atualMajorTask.Id)
+			_minorTaskController
+				.GetAllTasksfromMajorTask(atualMajorTask.Id)
+				.Data?
 				.ForEach(t => MinorTasksCheckList.Items.Add(t.Title));
 		}
 
@@ -214,9 +167,11 @@ namespace MyTaskList
 				label.ForeColor = Color.Red;
 				label.Text = r.Message;
 			}
-
-			label.ForeColor = Color.Green;
-			label.Text = r.Message;
+			else
+			{
+				label.ForeColor = Color.Green;
+				label.Text = r.Message;
+			}
 		}
 	}
 }

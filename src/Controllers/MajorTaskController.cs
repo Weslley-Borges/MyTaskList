@@ -41,6 +41,9 @@ namespace MyTaskList.src.Controllers
 			if (task == null)
 				return new Response<MajorTask>(true, "ERRO: Nenhuma tarefa foi selecionada!");
 
+			if (_services.GetAllTasks().Exists(t => t.Title == request.Title))
+				return new Response<MajorTask>(true, "ERRO: CRIE UMA TAREFA COM NOME DIFERENTE");
+
 			_services.UpdateTask(task.Id, request);
 			return new Response<MajorTask>(false, "Tarefa atualizada com sucesso!", _services.GetTask(task.Id));
 		}
