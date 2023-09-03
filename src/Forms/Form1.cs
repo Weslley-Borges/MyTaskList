@@ -1,6 +1,6 @@
-using MyTaskList.src.Controllers;
 using MyTaskList.src.Data;
 using MyTaskList.src.Models;
+using MyTaskList.src.Controllers;
 using MyTaskList.src.Services.MajorTaskServices;
 using MyTaskList.src.Services.MinorTaskServices;
 
@@ -100,7 +100,7 @@ namespace MyTaskList
 		private void NewMinorTaskButton_Click(object sender, EventArgs e)
 		{
 			Response<MinorTask> result = _minorTaskController.NewMinorTask(
-				atualMajorTask, 
+				atualMajorTask,
 				MinorTaskInput.Text);
 
 			if (!result.IsError)
@@ -123,7 +123,7 @@ namespace MyTaskList
 
 		private void UpdateMinorTaskButton_Click(object sender, EventArgs e)
 		{
-			
+
 			Response<MinorTask> result = _minorTaskController.UpdateMinorTask(
 				atualMinorTask, MinorTaskInput.Text);
 
@@ -140,6 +140,8 @@ namespace MyTaskList
 		/// </summary>
 		private void UpdateForm()
 		{
+			MinorTaskErrorLabel.Text = "";
+			MajorTaskErrorLabel.Text = "";
 			MinorTasksCheckList.Items.Clear();
 			MajorTasksList.Items.Clear();
 
@@ -152,12 +154,55 @@ namespace MyTaskList
 			MajorTaskDescriptionInput.Text = atualMajorTask?.Description;
 			MinorTaskInput.Text = atualMinorTask?.Title;
 
-			if (atualMajorTask == null) return;
+			if (atualMajorTask == null)
+			{
+				MinorTasksCheckList.Visible = false;
+				MinorTaskInput.Visible = false;
+				MinorTaskLabel.Visible = false;
+				NewMinorTaskButton.Visible = false;
+				DeleteMinorTaskButton.Visible = false;
+				UpdateMinorTaskButton.Visible = false;
+				MinorTasksListLabel.Visible = false;
+				DoneCheckbox.Visible = false;
 
+				return;
+			}
+
+			MinorTasksListLabel.Visible = true;
+			MinorTasksCheckList.Visible = true;
+			MinorTaskLabel.Visible = true;
+			MinorTaskInput.Visible = true;
+			NewMinorTaskButton.Visible = true;
+			DeleteMinorTaskButton.Visible = true;
+			UpdateMinorTaskButton.Visible = true;
+			DoneCheckbox.Visible = true;
+
+			int idx = 0;
 			_minorTaskController
 				.GetAllTasksfromMajorTask(atualMajorTask.Id)
 				.Data?
-				.ForEach(t => MinorTasksCheckList.Items.Add(t.Title));
+				.ForEach(t =>
+				{
+					MinorTasksCheckList.Items.Add(t.Title);
+					CheckState st = t.Done ? CheckState.Checked : CheckState.Unchecked;
+
+					MinorTasksCheckList.SetItemCheckState(idx, st);
+					idx++;
+				}
+			);
+
+			if (atualMinorTask == null) return;
+
+			DoneCheckbox.Checked = atualMinorTask.Done;
+		}
+
+		private void DoneCheckbox_CheckedChanged(object sender, EventArgs e)
+		{
+			if (atualMinorTask == null)
+				return;
+
+			_minorTaskController.CheckAsDone(atualMinorTask);
+			UpdateForm();
 		}
 
 		private static void ShowMessage<T>(Response<T> r, Label label)

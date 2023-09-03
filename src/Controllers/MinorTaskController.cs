@@ -51,6 +51,18 @@ namespace MyTaskList.src.Controllers
 			return new Response<MinorTask>(false, "Tarefa atualizada com sucesso!", _services.GetTask(task.Id));
 		}
 
+		public Response<MinorTask> CheckAsDone(MinorTask? task)
+		{
+			if (task == null)
+				return new Response<MinorTask>(true, "ERRO: Nenhuma tarefa foi selecionada!");
+
+			MinorTask request = task;
+			request.Done = request.Done == false;
+
+			_services.UpdateTask(task.Id, request);
+			return new Response<MinorTask>(false, "Tarefa atualizada com sucesso!", _services.GetTask(task.Id));
+		}
+
 		/// <summary>
 		/// Validate and delete a <see cref="MinorTask"/>
 		/// </summary>
