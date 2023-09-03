@@ -98,9 +98,9 @@
 			MajorTaskDescriptionLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
 			MajorTaskDescriptionLabel.Location = new Point(252, 51);
 			MajorTaskDescriptionLabel.Name = "MajorTaskDescriptionLabel";
-			MajorTaskDescriptionLabel.Size = new Size(68, 15);
+			MajorTaskDescriptionLabel.Size = new Size(59, 15);
 			MajorTaskDescriptionLabel.TabIndex = 5;
-			MajorTaskDescriptionLabel.Text = "Description";
+			MajorTaskDescriptionLabel.Text = "Descrição";
 			// 
 			// MinorTasksListLabel
 			// 
@@ -150,6 +150,7 @@
 			UpdateMajorTaskButton.TabIndex = 11;
 			UpdateMajorTaskButton.Text = "Atualizar";
 			UpdateMajorTaskButton.UseVisualStyleBackColor = true;
+			UpdateMajorTaskButton.Click += UpdateMajorTaskButton_Click;
 			// 
 			// label2
 			// 

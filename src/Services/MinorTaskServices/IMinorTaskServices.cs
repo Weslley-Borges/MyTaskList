@@ -7,7 +7,7 @@ namespace MyTaskList.src.Services.MinorTaskServices
         MinorTask? GetTask(int id);
         List<MinorTask> GetTasksFromMajorTask(int majorTaskId);
         void AddTask(MinorTask minorTask);
-        void UpdateTask(MinorTask request);
+        void UpdateTask(int id,MinorTask request);
         void DeleteTask(MinorTask minorTask);
     }
 }

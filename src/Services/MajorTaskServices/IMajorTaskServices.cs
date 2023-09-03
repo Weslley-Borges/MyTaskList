@@ -8,6 +8,6 @@ namespace MyTaskList.src.Services
         MajorTask? GetTask(int id);
         void AddTask(MajorTask majorTask);
         void DeleteTask(MajorTask majorTask);
-        void UpdateTask(MajorTask request);
+        void UpdateTask(int id, MajorTask request);
     }
 }
