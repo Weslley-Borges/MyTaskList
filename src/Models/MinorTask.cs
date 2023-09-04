@@ -3,7 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyTaskList.src.Models
 {
-    internal class MinorTask
+	[Table("MinorTasks")]
+	internal class MinorTask
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

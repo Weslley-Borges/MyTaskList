@@ -134,10 +134,6 @@ namespace MyTaskList
 			ShowMessage(result, MinorTaskErrorLabel);
 		}
 
-
-		/// <summary>
-		/// Updates WinForm's view
-		/// </summary>
 		private void UpdateForm()
 		{
 			MinorTaskErrorLabel.Text = "";
@@ -164,6 +160,8 @@ namespace MyTaskList
 				UpdateMinorTaskButton.Visible = false;
 				MinorTasksListLabel.Visible = false;
 				DoneCheckbox.Visible = false;
+				TaskProgressBar.Visible = false;
+				ProgressBarLabel.Visible = false;
 
 				return;
 			}
@@ -176,7 +174,11 @@ namespace MyTaskList
 			DeleteMinorTaskButton.Visible = true;
 			UpdateMinorTaskButton.Visible = true;
 			DoneCheckbox.Visible = true;
+			TaskProgressBar.Visible = true;
+			ProgressBarLabel.Visible = true;
 
+
+			int done = 0;
 			int idx = 0;
 			_minorTaskController
 				.GetAllTasksfromMajorTask(atualMajorTask.Id)
@@ -187,12 +189,20 @@ namespace MyTaskList
 					CheckState st = t.Done ? CheckState.Checked : CheckState.Unchecked;
 
 					MinorTasksCheckList.SetItemCheckState(idx, st);
+
+					if (st == CheckState.Checked)
+						done++;
 					idx++;
 				}
 			);
 
-			if (atualMinorTask == null) return;
+			TaskProgressBar.Value = done == 0 || MinorTasksCheckList.Items.Count == 0
+				? 0
+				: (done * 100) / MinorTasksCheckList.Items.Count;
 
+			ProgressBarLabel.Text = $"{TaskProgressBar.Value}%";
+
+			if (atualMinorTask == null) return;
 			DoneCheckbox.Checked = atualMinorTask.Done;
 		}
 

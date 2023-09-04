@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MyTaskList.src.Models;
-
 
 namespace MyTaskList.src.Data
 {
@@ -9,13 +9,20 @@ namespace MyTaskList.src.Data
         public DbSet<MajorTask> MajorTasks { get; set; }
         public DbSet<MinorTask> MinorTasks { get; set; }
 
+        public string? _connectionString;
+        public DataContext()
+        {
+			IConfiguration config = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+			_connectionString = config["ConnectionStrings:MySQL"];
+		}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connectionString = "Server=127.0.0.1;Port=3306 ;Uid=root; Database=myTaskList;";
-            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-
-            Console.WriteLine(ServerVersion.AutoDetect(connectionString));
+            optionsBuilder.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString));
         }
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyTaskList.src.Models
 {
+    [Table("MajorTasks")]
 	internal class MajorTask
 	{
 		[Key]

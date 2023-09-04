@@ -23,9 +23,6 @@ namespace MyTaskList.src.Controllers
 			if (newTask.Title == "" || newTask.Description == "")
 				return new Response<MajorTask>(true, "ERRO: Preencha os campos 'Título' e 'Descrição'");
 
-			if (_services.GetAllTasks().Exists(t => t.Title == newTask.Title))
-				return new Response<MajorTask>(true, "ERRO: CRIE UMA TAREFA COM NOME DIFERENTE");
-
 			_services.AddTask(newTask);
 			return new Response<MajorTask>(false, "Tarefa criada com sucesso!");
 		}
@@ -40,9 +37,6 @@ namespace MyTaskList.src.Controllers
 		{
 			if (task == null)
 				return new Response<MajorTask>(true, "ERRO: Nenhuma tarefa foi selecionada!");
-
-			if (_services.GetAllTasks().Exists(t => t.Title == request.Title))
-				return new Response<MajorTask>(true, "ERRO: CRIE UMA TAREFA COM NOME DIFERENTE");
 
 			_services.UpdateTask(task.Id, request);
 			return new Response<MajorTask>(false, "Tarefa atualizada com sucesso!", _services.GetTask(task.Id));

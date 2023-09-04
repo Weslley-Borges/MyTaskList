@@ -62,9 +62,9 @@
               "target": "Package",
               "version": "[7.0.0, )"
             },
-            "NUnit": {
+            "Microsoft.Extensions.Configuration.Json": {
               "target": "Package",
-              "version": "[3.13.3, )"
+              "version": "[7.0.0, )"
             },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
